@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Data & models (large / copyrighted / downloadable at runtime)
+data/*.pdf
+*.gguf
+medical_db/
+*.sqlite3
+
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
