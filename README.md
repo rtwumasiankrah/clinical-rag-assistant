@@ -68,6 +68,39 @@ streamlit run app/streamlit_app.py
 
 The Mistral-7B weights (~4 GB GGUF) download automatically from the Hugging Face Hub on first run.
 
+## Run with Docker
+
+The API is containerized — one command builds the image and starts the service:
+
+```bash
+docker compose up --build
+```
+
+**What happens on first run:** the entrypoint bootstraps everything automatically —
+it generates the 2-page sample corpus (the same one the Colab walkthrough uses),
+builds the Chroma index, and downloads the models into a named Docker volume:
+the Mistral-7B GGUF weights (~4 GB) and the `thenlper/gte-large` embedding model
+(~1.3 GB). Expect the first run to take a while (large downloads plus the index
+build); subsequent runs reuse the volume and start in seconds. Nothing
+model-sized is baked into the image.
+
+**Endpoints** (once the logs show the API listening on :8000):
+
+```bash
+# health + index readiness
+curl http://localhost:8000/health
+
+# ask a question (grounded in the sample corpus: sepsis & appendicitis)
+curl -X POST http://localhost:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What is the recommended timing for antibiotics in sepsis?"}'
+```
+
+`POST /ask` returns `{"answer", "sources": [{"page"}], "disclaimer"}` and answers
+`503` while the index is still building. As with the rest of this repo, the
+container serves an **educational prototype — not medical advice** (every
+response carries the disclaimer).
+
 ## What's in this repo
 
 | Path | What it is |
@@ -77,6 +110,9 @@ The Mistral-7B weights (~4 GB GGUF) download automatically from the Hugging Face
 | `src/` | Productionized pipeline: `config.py`, `chunking.py`, `ingest.py`, `qa.py`, `evaluate.py`, `prompts.py` (no LangChain dependency) |
 | `scripts/build_index.py` | One-shot CLI: PDF → Chroma index |
 | `scripts/ask.py` | CLI: ask a question, get a cited answer |
+| `scripts/make_sample_corpus.py` | Generates the 2-page sample corpus (mirrors the walkthrough notebook) |
+| `api/main.py` | FastAPI service: `POST /ask`, `GET /health` (lazy model loading) |
+| `Dockerfile`, `docker-compose.yml`, `entrypoint.sh` | Containerized deployment; first-run bootstrap into a named volume |
 | `app/streamlit_app.py` | Interactive demo with retrieved-evidence viewer |
 | `tests/` | Unit tests for chunking, prompts, and config (run in CI) |
 | `data/README.md` | How to obtain the manual PDF |

@@ -1,0 +1,23 @@
+# Clinical RAG Assistant — one-command containerized demo.
+#
+# First run bootstraps everything automatically: the sample corpus is generated,
+# the Chroma index is built, and the Hugging Face models (~5 GB total) download
+# into the named volume. Subsequent runs reuse the volume and start in seconds.
+services:
+  rag-api:
+    build: .
+    image: clinical-rag-assistant:latest
+    container_name: clinical-rag-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATA_DIR: /data
+      MEDICAL_PDF_PATH: /data/sample_manual.pdf
+      CHROMA_PERSIST_DIR: /data/chroma
+      HF_HOME: /data/hf-cache
+    volumes:
+      - rag-data:/data
+    restart: unless-stopped
+
+volumes:
+  rag-data:

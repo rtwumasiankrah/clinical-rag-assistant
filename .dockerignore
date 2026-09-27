@@ -1,0 +1,21 @@
+# git / VCS
+.git
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+# notebooks (demo-only; the image bootstraps from scripts/)
+.ipynb_checkpoints/
+notebooks/
+# tests + CI (run outside the image)
+tests/
+.github/
+# local data / models (regenerated or downloaded at runtime)
+medical_db/
+data/*.pdf
+*.gguf
+*.sqlite3
+# misc
+.DS_Store

@@ -9,5 +9,9 @@ llama-cpp-python>=0.2.11
 # --- demo app ---
 streamlit>=1.33.0
 
+# --- api ---
+fastapi>=0.110.0
+uvicorn>=0.29.0
+
 # --- dev / CI ---
 pytest>=8.0.0
