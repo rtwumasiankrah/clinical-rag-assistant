@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: pip install pytest tiktoken
+
+      - name: Run unit tests
+        # Tests cover the model-free parts of the pipeline (chunking, prompts,
+        # config), so no LLM / embedding-model download is needed in CI.
+        run: pytest -q
