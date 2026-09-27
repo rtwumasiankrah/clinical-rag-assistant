@@ -1,5 +1,0 @@
-{
-  "tests/test_pipeline.py::test_split_text_overlap_preserves_context": true,
-  "tests/test_pipeline.py::test_config_defaults_match_coursework": true,
-  "tests/test_pipeline.py::test_config_env_override": true
-}
