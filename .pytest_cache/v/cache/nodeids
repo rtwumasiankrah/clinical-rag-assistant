@@ -1,0 +1,12 @@
+[
+  "tests/test_pipeline.py::test_chunk_pages_keeps_provenance",
+  "tests/test_pipeline.py::test_config_defaults_match_coursework",
+  "tests/test_pipeline.py::test_config_env_override",
+  "tests/test_pipeline.py::test_disclaimer_present",
+  "tests/test_pipeline.py::test_eval_prompt_structure",
+  "tests/test_pipeline.py::test_qa_prompt_is_grounded",
+  "tests/test_pipeline.py::test_split_text_empty_input",
+  "tests/test_pipeline.py::test_split_text_overlap_preserves_context",
+  "tests/test_pipeline.py::test_split_text_rejects_bad_overlap",
+  "tests/test_pipeline.py::test_split_text_respects_token_budget"
+]
