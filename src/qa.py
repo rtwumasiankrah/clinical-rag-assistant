@@ -36,7 +36,7 @@ def retrieve_context(question: str, config: RAGConfig) -> list:
     query_embedding = model.encode([question], convert_to_numpy=True).tolist()
     results = collection.query(
         query_embeddings=query_embedding,
-        n_results=config.top_k,
+        n_results=config.retrieval_k,
         include=["documents", "metadatas", "distances"],
     )
     hits = []
