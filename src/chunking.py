@@ -25,7 +25,9 @@ def _split_by_separators(text: str, separators: list) -> list:
     sep = separators[0]
     rest = separators[1:]
     if sep == "":
-        return list(text)
+        # No finer separator: keep the piece whole (over-long pieces are
+        # handled with token windows by the caller).
+        return [text]
     if sep not in text:
         return _split_by_separators(text, rest)
     parts, splits = [], []
