@@ -1,6 +1,7 @@
 # ⚕️ Clinical RAG Assistant
 
 [![CI](https://github.com/rtwumasiankrah/clinical-rag-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/rtwumasiankrah/clinical-rag-assistant/actions/workflows/ci.yml)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rtwumasiankrah/clinical-rag-assistant/blob/main/notebooks/clinical_rag_walkthrough.ipynb)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -20,27 +21,20 @@ to clinics that can't keep a specialist on staff.
 
 ## How it works
 
-```
-┌──────────┐   ┌───────────┐   ┌──────────────┐   ┌────────────┐   ┌──────────────┐
-│ 4,100-pg │──▶│  Chunking │──▶│  Embeddings  │──▶│   Chroma   │──▶│  Retrieval   │
-│   PDF    │   │ 512 tok / │   │ thenlper /   │   │  vector    │   │  top-k=3     │
-│          │   │ 20 overlap│   │  gte-large   │   │   store    │   │  (cosine)    │
-└──────────┘   └───────────┘   └──────────────┘   └────────────┘   └──────┬───────┘
-                                                                        │
-                                                                        ▼
-                                                              ┌──────────────────┐
-                                                              │ Mistral-7B-Instruct│
-                                                              │ (local GGUF via  │
-                                                              │  llama-cpp)      │
-                                                              └────────┬─────────┘
-                                                                       │
-                                                                       ▼
-                                                              ┌──────────────────┐
-                                                              │ Grounded answer  │
-                                                              │ + page citations │
-                                                              │ + LLM judge score│
-                                                              └──────────────────┘
-```
+**Pipeline:**
+
+- **4,100-page PDF** → text extracted page by page with PyMuPDF.
+- **Chunking** → token-aware chunks (512 tokens, 20-token overlap,
+  `cl100k_base`) so context flows across chunk boundaries.
+- **Embeddings** → every chunk embedded with `thenlper/gte-large`.
+- **Chroma vector store** → persisted cosine-similarity index of chunk vectors.
+- **Retrieval** → the question is embedded the same way; the top-3 most
+  similar chunks are retrieved with page numbers attached.
+- **Generation** → Mistral-7B-Instruct (quantized GGUF, run **locally** — no
+  query text ever leaves the machine) answers **only from the retrieved
+  context**, responding *"I don't know"* when the answer isn't there.
+- **Evaluation** → the same LLM rates every answer as a judge on
+  **groundedness** and **relevance**, each on a 1–5 rubric.
 
 1. **Ingestion** — the manual is extracted with PyMuPDF and split into token-aware chunks
    (512 tokens, 20-token overlap, `cl100k_base`) so context flows across chunk boundaries.
@@ -79,6 +73,7 @@ The Mistral-7B weights (~4 GB GGUF) download automatically from the Hugging Face
 | Path | What it is |
 |---|---|
 | `notebooks/medical_diagnosis_rag.ipynb` | The original coursework notebook, as run — 140 cells covering prompt engineering, RAG, and evaluation |
+| `notebooks/clinical_rag_walkthrough.ipynb` | Thin Colab walkthrough — calls `scripts/` and `src/` directly on a sample corpus, runs end-to-end in the browser |
 | `src/` | Productionized pipeline: `config.py`, `chunking.py`, `ingest.py`, `qa.py`, `evaluate.py`, `prompts.py` (no LangChain dependency) |
 | `scripts/build_index.py` | One-shot CLI: PDF → Chroma index |
 | `scripts/ask.py` | CLI: ask a question, get a cited answer |
