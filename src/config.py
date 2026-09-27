@@ -41,7 +41,7 @@ class RAGConfig:
     )
 
     # --- retrieval ---
-    top_k: int = field(default_factory=lambda: int(_env("RETRIEVAL_K", "3")))
+    retrieval_k: int = field(default_factory=lambda: int(_env("RETRIEVAL_K", "3")))
 
     # --- generation (Mistral-7B-Instruct GGUF via llama-cpp-python) ---
     llm_repo_id: str = field(
