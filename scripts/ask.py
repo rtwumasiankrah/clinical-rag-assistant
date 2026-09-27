@@ -23,7 +23,7 @@ def main() -> None:
 
     config = RAGConfig()
     if args.k:
-        config.top_k = args.k
+        config.retrieval_k = args.k
 
     result = answer_question(args.question, config)
     print("\nQUESTION:", result["question"])
