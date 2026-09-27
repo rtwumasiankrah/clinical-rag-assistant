@@ -79,9 +79,10 @@ def test_config_defaults_match_coursework():
     config = RAGConfig()
     assert config.chunk_size == 512
     assert config.chunk_overlap == 20
-    assert config.top_k == 3
+    assert config.retrieval_k == 3
     assert config.max_tokens == 500
     assert config.temperature == 0.0
+    assert config.top_k == 50  # LLM sampling top_k
     assert "gte-large" in config.embedding_model_name
     assert "Mistral-7B-Instruct" in config.llm_repo_id
 
@@ -91,7 +92,7 @@ def test_config_env_override(monkeypatch):
     monkeypatch.setenv("RETRIEVAL_K", "5")
     config = RAGConfig()
     assert config.chunk_size == 256
-    assert config.top_k == 5
+    assert config.retrieval_k == 5
 
 
 def test_disclaimer_present():
